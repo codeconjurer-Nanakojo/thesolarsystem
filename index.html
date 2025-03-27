@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<!-- Before -->
+<meta  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- After -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Interactive Solar System</title>
+  <!-- Preload important assets -->
+<link rel="preload" href="texture/2k_sun.jpg" as="image">
+<link rel="preload" href="texture/2k_stars_milky_way.jpg" as="image">
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-animation-component@5.1.2/dist/aframe-animation-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="audio-unlock">Click anywhere to unlock audio and start experience</div>
+  
+  <a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+    <a-assets timeout="30000">
+      <!-- Critical assets (preload first) -->
+      <img src="texture/2k_sun.jpg" id="sun" alt="Sun" preload="auto">
+      <img src="texture/2k_earth_daymap.jpg" id="earth" alt="Earth" preload="auto">
+      <img src="texture/2k_stars_milky_way.jpg" id="milky" alt="Milky Way" preload="auto">
+      <img src="texture/2k_moon.jpg" id="moon" alt="Moon" preload="auto">
+      
+      <!-- Medium priority -->
+      <img src="texture/2k_mercury.jpg" id="mercury" alt="Mercury" preload="none">
+      <img src="texture/2k_venus_surface.jpg" id="venus" alt="Venus" preload="none">
+      <img src="texture/2k_mars.jpg" id="mars" alt="Mars" preload="none">
+      
+      <!-- Low priority (distant planets) -->
+      <img src="texture/2k_jupiter.jpg" id="jupiter" alt="Jupiter" preload="none">
+      <img src="texture/2k_saturn.jpg" id="saturn" alt="Saturn" preload="none">
+      <img src="texture/2k_saturn_ring_alpha.png" id="ring" alt="Saturn's Rings" preload="none">
+      <img src="texture/2k_uranus.jpg" id="uranus" alt="Uranus" preload="none">
+      <img src="texture/2k_neptune.jpg" id="neptune" alt="Neptune" preload="none">
+      
+      <!-- LOD Textures -->
+      <img src="texture/1k_sun.jpg" id="sun-lowres" alt="Sun (Low Res)">
+      <img src="texture/1k_earth_daymap.jpg" id="earth-lowres" alt="Earth (Low Res)">
+      <img src="texture/1k_jupiter.jpg" id="jupiter-lowres" alt="Jupiter (Low Res)">
+      
+      <!-- Audio -->
+      <audio id="click-sound" 
+             src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg" 
+             preload="auto">
+      </audio>
+    </a-assets>
+    <!-- Lighting -->
+    <a-light type="ambient" color="#445588"></a-light>
+    <a-light type="point" intensity="2" position="0 0 0" color="#ffffff"></a-light>
+
+    <!-- Camera -->
+    <a-entity id="camera" camera="fov: 80" position="0 5 60" rotation="25 0 0" look-controls wasd-controls>
+      <a-entity cursor="fuse: false; rayOrigin: mouse"
+                position="0 0 -1"
+                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                material="color: #FFFFFF; shader: flat">
+      </a-entity>
+    </a-entity>
+
+    <a-sky src="#milky" rotation="0 -130 0"></a-sky>
+    
+<!-- Enhanced Sun Model -->
+<a-entity id="sun-core" position="0 0 0">
+  <!-- Main sun sphere with improved properties -->
+  <a-sphere id="sun" class="clickable" 
+            radius="5" 
+            src="#sun"
+            material="shader: flat; src: #sun; color: #FFF; emissive: #FFF; emissiveIntensity: 2"
+            light="type: point; intensity: 2; distance: 200; decay: 1"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 60000; easing: linear">
+    
+    <!-- Glow effect using a larger, transparent sphere -->
+    <a-sphere radius="5.5"
+              material="shader: flat; color: #F90; opacity: 0.4; transparent: true"
+              animation="property: components.material.color; dir: alternate; dur: 2000;
+                         from: #F90; to: #F60; loop: true; easing: easeInOutSine">
+    </a-sphere>
+    
+    <!-- Solar flares particles -->
+    <a-entity particle-system="preset: sun; color: #F80; size: 0.5; particleCount: 500"></a-entity>
+    
+    <!-- Label -->
+    <a-text class="planet-label" 
+            value="Sun" 
+            position="0 -7 0" 
+            align="center" 
+            color="#FFF"
+            shader="msdf"
+            font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt">
+    </a-text>
+  </a-sphere>
+</a-entity>
+
+<!-- Mercury System -->
+<a-entity id="mercury-system" position="0 0 0">
+  <!-- Orbit Path Visualization -->
+  <a-ring radius-inner="6.9" radius-outer="7.1" 
+          color="#5A5A5A" opacity="0.3"
+          rotation="-90 0 0" 
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="2000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+
+  <!-- Mercury Orbit (88 Earth days) -->
+  <a-entity id="mercury-orbit" 
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 88000; easing: linear">
+    
+    <!-- Mercury Planet -->
+    <a-sphere id="mercury" class="clickable" position="7 0 0" 
+              radius="0.38" 
+              src="#mercury"
+              material="roughness: 0.8; metalness: 0.2"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 59000; easing: linear"
+              event-set__mouseenter="scale: 1.2 1.2 1.2"
+              event-set__mouseleave="scale: 1 1 1">
+      
+      <!-- Improved Label -->
+      <a-text class="planet-label" 
+              value="Mercury" 
+              position="0 -0.8 0" 
+              align="center"
+              color="#FFF"
+              shader="msdf"
+              font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt"
+              width="3">
+      </a-text>
+      
+      <!-- Surface Details (Optional) -->
+      <a-entity position="0 0 0"
+                geometry="primitive: plane; height: 0.5; width: 0.5"
+                material="src: #mercury-surface; transparent: true; opacity: 0.8"
+                visible="false">
+      </a-entity>
+    </a-sphere>
+  </a-entity>
+
+  <!-- Orbit Information (Optional) -->
+  <a-entity position="7 0 -8"
+            text="value: Orbit: 88 Earth Days\nDistance: 0.39 AU; 
+                  align: center; color: #AAA; width: 4"
+            visible="false">
+  </a-entity>
+</a-entity>
+
+<!-- Venus System -->
+<a-entity id="venus-system" position="0 0 0">
+  <!-- Orbit Path Visualization -->
+  <a-ring radius-inner="9.9" radius-outer="10.1" 
+          color="#E6B89C" opacity="0.4"
+          rotation="-90 0 0" 
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.color" 
+                from="#E6B89C" to="#D4A076" dur="5000"
+                direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+
+  <!-- Venus Orbit (225 Earth days) -->
+  <a-entity id="venus-orbit" 
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 225000; easing: linear">
+    
+    <!-- Venus Planet with Atmospheric Effects -->
+    <a-entity id="venus-entity" position="10 0 0">
+      <!-- Main Planet Body -->
+      <a-sphere id="venus" class="clickable" 
+                radius="0.95" 
+                src="#venus"
+                material="roughness: 0.9; metalness: 0.1; fog: true"
+                animation="property: rotation; from: 0 0 0; to: 0 -360 0; loop: true; dur: 243000; easing: linear"
+                event-set__mouseenter="scale: 1.2 1.2 1.2"
+                event-set__mouseleave="scale: 1 1 1">
+        
+        <!-- Atmospheric Haze -->
+        <a-sphere radius="1.05" 
+                  material="color: #E6B89C; opacity: 0.3; transparent: true"
+                  animation="property: components.material.opacity; from: 0.2; to: 0.4; dur: 3000; loop: true; dir: alternate">
+        </a-sphere>
+        
+        <!-- Improved Label -->
+        <a-text class="planet-label" 
+                value="Venus" 
+                position="0 -1.4 0" 
+                align="center"
+                color="#FFF"
+                shader="msdf"
+                font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt"
+                width="3">
+        </a-text>
+      </a-sphere>
+    </a-entity>
+  </a-entity>
+
+  <!-- Scientific Facts (Optional) -->
+  <a-entity position="10 0 -11"
+            text="value: Retrograde Rotation\nSurface Temp: 462°C\nOrbit: 225 Days; 
+                  align: center; color: #E6B89C; width: 5"
+            visible="false">
+    <a-animation attribute="position" to="10 1.5 -11" dur="2000" 
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-entity>
+</a-entity>
+
+<!-- Earth System -->
+<a-entity id="earth-system" position="0 0 0">
+  <!-- Earth's Orbit Path -->
+  <a-ring radius-inner="14.9" radius-outer="15.1"
+          color="#4466CC" opacity="0.4"
+          rotation="-90 0 0"
+          segments-theta="256"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="3000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+
+  <!-- Earth Orbit (365 days) -->
+  <a-entity id="earth-orbit"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 365000; easing: linear">
+    
+    <!-- Earth Planet -->
+    <a-entity id="earth-entity" position="15 0 0">
+      <!-- Main Earth Sphere with Clouds -->
+      <a-sphere id="earth" class="clickable"
+                radius="1"
+                src="#earth"
+                material="roughness: 0.7; metalness: 0.3; specular: #FFF"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"
+                event-set__mouseenter="scale: 1.2 1.2 1.2"
+                event-set__mouseleave="scale: 1 1 1">
+        
+        <!-- Atmospheric Glow -->
+        <a-sphere radius="1.05"
+                  material="shader: flat; color: #4466FF; opacity: 0.2; transparent: true">
+        </a-sphere>
+
+        <!-- Improved Label -->
+        <a-text class="planet-label"
+                value="Earth"
+                position="0 -1.5 0"
+                align="center"
+                color="#FFF"
+                shader="msdf"
+                font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt"
+                width="3">
+        </a-text>
+      </a-sphere>
+
+      <!-- Moon System -->
+      <a-entity id="moon-system">
+        <!-- Moon Orbit Path -->
+        <a-ring radius-inner="1.4" radius-outer="1.6"
+                color="#AAA" opacity="0.2"
+                rotation="-90 0 0"
+                segments-theta="128"
+                material="side: double; transparent: true">
+        </a-ring>
+
+        <!-- Moon Orbit (27.3 days) -->
+        <a-entity id="moon-orbit"
+                  animation="property: rotation; to: 0 360 0; loop: true; dur: 27000; easing: linear">
+          <a-sphere id="moon" position="1.5 0 0" radius="0.27" src="#moon"
+                    material="roughness: 1.0; metalness: 0.0">
+            <a-text class="moon-label"
+                    value="Moon"
+                    position="0 -0.5 0"
+                    align="center"
+                    color="#FFF"
+                    width="2">
+            </a-text>
+          </a-sphere>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+  </a-entity>
+
+  <!-- Optional Info Display -->
+  <a-entity position="15 0 -16"
+            text="value: Home Planet\nOrbit: 365.25 Days\nMoon Orbit: 27.3 Days; 
+                  align: center; color: #88AAFF; width: 5"
+            visible="false">
+  </a-entity>
+</a-entity>
+
+<!-- Mars System -->
+<a-entity id="mars-system" position="0 0 0">
+  <!-- Mars Orbit Path -->
+  <a-ring radius-inner="19.9" radius-outer="20.1" 
+  color="#C1440E" opacity="0.4"
+  rotation="-90 0 0"
+  segments-theta="128"
+  material="side: double; transparent: true; shader: flat">
+<a-animation attribute="material.opacity" from="0.3" to="0.5" dur="5000"
+         direction="alternate" repeat="indefinite"></a-animation>
+</a-ring>
+  <!-- Mars Orbit Animation -->
+  <a-entity id="mars-orbit" 
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 687000; easing: linear">
+    
+    <!-- Mars Planet -->
+    <a-sphere id="mars" class="clickable" position="20 0 0" radius="0.53" src="#mars"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 24600; easing: linear"
+              event-set__mouseenter="scale: 1.2 1.2 1.2"
+              event-set__mouseleave="scale: 1 1 1">
+      <a-text class="planet-label" value="Mars" position="0 -0.8 0" align="center" visible="true"></a-text>
+      
+      <!-- Phobos Orbit -->
+      <a-entity id="phobos-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 7660; easing: linear">
+        <a-sphere id="phobos" position="0.8 0 0" radius="0.08" src="#moon">
+          <a-text class="moon-label" value="Phobos" position="0 -0.15 0" align="center" visible="true"></a-text>
+        </a-sphere>
+      </a-entity>
+      
+      <!-- Deimos Orbit -->
+      <a-entity id="deimos-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 30350; easing: linear">
+        <a-sphere id="deimos" position="1.2 0 0" radius="0.05" src="#moon">
+          <a-text class="moon-label" value="Deimos" position="0 -0.1 0" align="center" visible="true"></a-text>
+        </a-sphere>
+      </a-entity>
+    </a-sphere>
+  </a-entity>
+</a-entity>
+
+
+<!-- Jupiter Orbit (12 Earth years) -->
+<a-entity id="jupiter-orbit" position="0 0 0" 
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 12000000; easing: linear">
+          <a-ring radius-inner="29.9" radius-outer="30.1" 
+          color="#B08F36" opacity="0.4"
+          rotation="-90 0 0"
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="6000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+  <!-- Jupiter (rotation: 10 hours) -->
+  <a-sphere id="jupiter" class="clickable" position="30 0 0" radius="2.5" src="#jupiter"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+            event-set__mouseenter="scale: 1.2 1.2 1.2"
+            event-set__mouseleave="scale: 1 1 1">
+    <a-text class="planet-label" value="Jupiter" position="0 -3.2 0" align="center" visible="true"></a-text>
+    
+    <!-- Galilean Moons -->
+    
+    <!-- Io (1.77 days) -->
+    <a-entity id="io-orbit" position="0 0 0"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 42480; easing: linear">
+      <a-sphere id="io" position="3.5 0 0" radius="0.12" src="#moon">
+        <a-text class="moon-label" value="Io" position="0 -0.2 0" align="center" visible="true"></a-text>
+      </a-sphere>
+    </a-entity>
+    
+    <!-- Europa (3.55 days) -->
+    <a-entity id="europa-orbit" position="0 0 0"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 85200; easing: linear">
+      <a-sphere id="europa" position="4.5 0 0" radius="0.1" src="#moon">
+        <a-text class="moon-label" value="Europa" position="0 -0.18 0" align="center" visible="true"></a-text>
+      </a-sphere>
+    </a-entity>
+    
+    <!-- Ganymede (7.15 days) -->
+    <a-entity id="ganymede-orbit" position="0 0 0"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 171600; easing: linear">
+      <a-sphere id="ganymede" position="5.5 0 0" radius="0.15" src="#moon">
+        <a-text class="moon-label" value="Ganymede" position="0 -0.25 0" align="center" visible="true"></a-text>
+      </a-sphere>
+    </a-entity>
+    
+    <!-- Callisto (16.69 days) -->
+    <a-entity id="callisto-orbit" position="0 0 0"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 400560; easing: linear">
+      <a-sphere id="callisto" position="7 0 0" radius="0.13" src="#moon">
+        <a-text class="moon-label" value="Callisto" position="0 -0.23 0" align="center" visible="true"></a-text>
+      </a-sphere>
+    </a-entity>
+  </a-sphere>
+</a-entity>
+
+
+
+<!-- Saturn System -->
+<a-entity id="saturn-orbit" position="0 0 0" 
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 29500000; easing: linear">
+          <a-ring radius-inner="49.9" radius-outer="50.1" 
+          color="#C9B07E" opacity="0.4"
+          rotation="-90 0 0"
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="7000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+          <a-entity position="50 0 0">
+    <!-- Saturn Planet -->
+    <a-sphere id="saturn" class="clickable" radius="2" src="#saturn"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 10700; easing: linear"
+              event-set__mouseenter="scale: 1.2 1.2 1.2"
+              event-set__mouseleave="scale: 1 1 1">
+      <a-text class="planet-label" value="Saturn" position="0 -3 0" align="center" visible="true"></a-text>
+      
+      <!-- Titan Moon -->
+      <a-entity id="titan-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 382800; easing: linear">
+        <a-sphere id="titan" position="3.5 0 0" radius="0.15" src="#moon"></a-sphere>
+      </a-entity>
+    </a-sphere>
+
+    <!-- Ring System -->
+    <a-entity id="saturn-rings" rotation="26.7 0 0">
+      <a-torus id="ring-b" color="#E5D9B6" segments-tubular="64" 
+               radius="2.8" radius-tubular="0.15"
+               material="side: double; transparent: true; opacity: 0.8"
+               animation="property: rotation; to: 0 360 0; loop: true; dur: 10700; easing: linear">
+      </a-torus>
+      
+      <a-ring id="cassini-division" color="#000000" radius-inner="2.8" 
+              radius-outer="3.0" opacity="0.5" rotation="0 0 0"
+              material="side: double; transparent: true">
+      </a-ring>
+    </a-entity>
+  </a-entity>
+</a-entity>
+
+<!-- Uranus System (Positioned at 65 units from Sun) -->
+<a-entity id="uranus-orbit" position="0 0 0" 
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 84000000; easing: linear">
+  <a-ring radius-inner="64.9" radius-outer="65.1" 
+          color="#7EC9C9" opacity="0.4"
+          rotation="-90 0 0"
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="8000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+  <!-- Uranus positioned at 65 units (was 50) -->
+  <a-entity position="65 0 0" rotation="82 0 0"> <!-- 82° axial tilt -->
+    <!-- Uranus Planet -->
+    <a-sphere id="uranus" class="clickable" radius="1.2" src="#uranus"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 17100; easing: linear"
+              event-set__mouseenter="scale: 1.2 1.2 1.2"
+              event-set__mouseleave="scale: 1 1 1">
+      <a-text class="planet-label" value="Uranus" position="0 -1.9 0" align="center" visible="true"></a-text>
+      
+      <!-- Major Moons -->
+      <a-entity id="titania-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 604800; easing: linear">
+        <a-sphere id="titania" position="2.5 0 0" radius="0.08" src="#moon"></a-sphere>
+      </a-entity>
+      
+      <a-entity id="oberon-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 1209600; easing: linear">
+        <a-sphere id="oberon" position="3 0 0" radius="0.07" src="#moon"></a-sphere>
+      </a-entity>
+    </a-entity>
+    
+    <!-- Faint Ring System -->
+    <a-entity id="uranus-rings" rotation="82 0 0"> <!-- Matches planet tilt -->
+      <a-ring color="#A0B0C0" radius-inner="1.5" radius-outer="1.8" opacity="0.4"
+              material="side: double; transparent: true" rotation="90 0 0">
+      </a-ring>
+      <a-ring color="#B0C0D0" radius-inner="1.8" radius-outer="2.1" opacity="0.3"
+              material="side: double; transparent: true" rotation="90 0 0">
+      </a-ring>
+    </a-entity>
+  </a-entity>
+</a-entity>
+
+
+<!-- Neptune System (Positioned at 80 units from Sun) -->
+<a-entity id="neptune-orbit" position="0 0 0" 
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 165000000; easing: linear">
+         <!-- orbit  -->
+          <a-ring radius-inner="79.9" radius-outer="80.1" 
+          color="#5D8AA8" opacity="0.4"
+          rotation="-90 0 0"
+          segments-theta="128"
+          material="side: double; transparent: true; shader: flat">
+    <a-animation attribute="material.opacity" from="0.3" to="0.5" dur="9000"
+                 direction="alternate" repeat="indefinite"></a-animation>
+  </a-ring>
+  <!-- Neptune positioned at 80 units -->
+  <a-entity position="80 0 0">
+    <!-- Neptune Planet -->
+    <a-sphere id="neptune" class="clickable" radius="1.1" src="#neptune"
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear"
+              event-set__mouseenter="scale: 1.2 1.2 1.2"
+              event-set__mouseleave="scale: 1 1 1">
+      <a-text class="planet-label" value="Neptune" position="0 -1.6 0" align="center" visible="true"></a-text>
+      
+      <!-- Triton Moon -->
+      <a-entity id="triton-orbit" position="0 0 0"
+                animation="property: rotation; to: 0 -360 0; loop: true; dur: 141120; easing: linear">
+        <a-sphere id="triton" position="2.2 0 0" radius="0.1" src="#moon">
+          <a-text class="moon-label" value="Triton" position="0 -0.18 0" align="center" visible="true"></a-text>
+        </a-sphere>
+      </a-entity>
+    </a-sphere>
+    
+    <!-- Faint Ring Arcs -->
+    <a-entity id="neptune-rings" rotation="90 0 0">
+      <a-ring color="#5D8AA8" radius-inner="1.4" radius-outer="1.6" opacity="0.2"
+              material="side: double; transparent: true" theta-length="120">
+      </a-ring>
+      <a-ring color="#5D8AA8" radius-inner="1.6" radius-outer="1.8" opacity="0.2"
+              material="side: double; transparent: true" rotation="0 120 0" theta-length="120">
+      </a-ring>
+      <a-ring color="#5D8AA8" radius-inner="1.8" radius-outer="2.0" opacity="0.2"
+              material="side: double; transparent: true" rotation="0 240 0" theta-length="120">
+      </a-ring>
+    </a-entity>
+  </a-entity>
+</a-entity>
+
+
+
+
+
+  <!-- Controls UI -->
+  <div id="controls">
+    <h4>Solar System Controls:</h4>
+    <p>WASD / ⬆️⬅️⬇️➡️:to Move</p>
+    <p>Mouse: to Look</p>
+    <p>Click: Select Planet</p>
+  </div>
+  <div id="info-panel">
+    <h3 id="info-title"></h3>
+    <p id="info-details"></p>
+  </div>
+  <script src="script.js"></script>
+  <!-- loading screen  -->
+<!-- Add this right after <body> -->
+  <!-- <div id="loading-screen">
+    <div class="loading-bar-container">
+      <div id="loading-bar"></div>
+    </div>
+    <div id="loading-text">Loading Solar System...</div>
+  </div> -->
+</body>
+</html>
