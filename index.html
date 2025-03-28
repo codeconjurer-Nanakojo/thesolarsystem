@@ -2,15 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<!-- Before -->
-<meta  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<!-- After -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Interactive Solar System</title>
-  <!-- Preload important assets -->
-<link rel="preload" href="texture/2k_sun.jpg" as="image">
-<link rel="preload" href="texture/2k_stars_milky_way.jpg" as="image">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-animation-component@5.1.2/dist/aframe-animation-component.min.js"></script>
   <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
@@ -18,39 +11,25 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="audio-unlock">Click anywhere to unlock audio and start experience</div>
-  
   <a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
     <a-assets timeout="30000">
-      <!-- Critical assets (preload first) -->
-      <img src="texture/2k_sun.jpg" id="sun" alt="Sun" preload="auto">
-      <img src="texture/2k_earth_daymap.jpg" id="earth" alt="Earth" preload="auto">
-      <img src="texture/2k_stars_milky_way.jpg" id="milky" alt="Milky Way" preload="auto">
-      <img src="texture/2k_moon.jpg" id="moon" alt="Moon" preload="auto">
+      <!-- Critical assets -->
+      <img src="texture/2k_sun.jpg" id="sun" alt="Sun">
+      <img src="texture/2k_earth_daymap.jpg" id="earth" alt="Earth">
+      <img src="texture/2k_stars_milky_way.jpg" id="milky" alt="Milky Way">
+      <img src="texture/2k_moon.jpg" id="moon" alt="Moon">
       
-      <!-- Medium priority -->
-      <img src="texture/2k_mercury.jpg" id="mercury" alt="Mercury" preload="none">
-      <img src="texture/2k_venus_surface.jpg" id="venus" alt="Venus" preload="none">
-      <img src="texture/2k_mars.jpg" id="mars" alt="Mars" preload="none">
-      
-      <!-- Low priority (distant planets) -->
-      <img src="texture/2k_jupiter.jpg" id="jupiter" alt="Jupiter" preload="none">
-      <img src="texture/2k_saturn.jpg" id="saturn" alt="Saturn" preload="none">
-      <img src="texture/2k_saturn_ring_alpha.png" id="ring" alt="Saturn's Rings" preload="none">
-      <img src="texture/2k_uranus.jpg" id="uranus" alt="Uranus" preload="none">
-      <img src="texture/2k_neptune.jpg" id="neptune" alt="Neptune" preload="none">
-      
-      <!-- LOD Textures -->
-      <img src="texture/1k_sun.jpg" id="sun-lowres" alt="Sun (Low Res)">
-      <img src="texture/1k_earth_daymap.jpg" id="earth-lowres" alt="Earth (Low Res)">
-      <img src="texture/1k_jupiter.jpg" id="jupiter-lowres" alt="Jupiter (Low Res)">
-      
-      <!-- Audio -->
-      <audio id="click-sound" 
-             src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg" 
-             preload="auto">
-      </audio>
+      <!-- Other planets -->
+      <img src="texture/2k_mercury.jpg" id="mercury" alt="Mercury">
+      <img src="texture/2k_venus_surface.jpg" id="venus" alt="Venus">
+      <img src="texture/2k_mars.jpg" id="mars" alt="Mars">
+      <img src="texture/2k_jupiter.jpg" id="jupiter" alt="Jupiter">
+      <img src="texture/2k_saturn.jpg" id="saturn" alt="Saturn">
+      <img src="texture/2k_saturn_ring_alpha.png" id="ring" alt="Saturn's Rings">
+      <img src="texture/2k_uranus.jpg" id="uranus" alt="Uranus">
+      <img src="texture/2k_neptune.jpg" id="neptune" alt="Neptune">
     </a-assets>
+
     <!-- Lighting -->
     <a-light type="ambient" color="#445588"></a-light>
     <a-light type="point" intensity="2" position="0 0 0" color="#ffffff"></a-light>
@@ -522,26 +501,18 @@
 
 
 
-
-  <!-- Controls UI -->
-  <div id="controls">
-    <h4>Solar System Controls:</h4>
-    <p>WASD / ⬆️⬅️⬇️➡️:to Move</p>
-    <p>Mouse: to Look</p>
-    <p>Click: Select Planet</p>
-  </div>
-  <div id="info-panel">
-    <h3 id="info-title"></h3>
-    <p id="info-details"></p>
-  </div>
-  <script src="script.js"></script>
-  <!-- loading screen  -->
-<!-- Add this right after <body> -->
-  <!-- <div id="loading-screen">
-    <div class="loading-bar-container">
-      <div id="loading-bar"></div>
+    <!-- Controls UI -->
+    <div id="controls">
+      <h4>Solar System Controls:</h4>
+      <p>WASD / ⬆️⬅️⬇️➡️: to Move</p>
+      <p>Mouse: to Look</p>
+      <p>Click: Select Planet</p>
     </div>
-    <div id="loading-text">Loading Solar System...</div>
-  </div> -->
+    <div id="info-panel">
+      <h3 id="info-title"></h3>
+      <p id="info-details"></p>
+    </div>
+  </a-scene>
+  <script src="script.js"></script>
 </body>
 </html>

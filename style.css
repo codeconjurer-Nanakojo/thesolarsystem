@@ -12,9 +12,7 @@
   --info-panel-max-width: 300px;
 }
 
-/* ======================
-   Planet-Specific Styles 
-   ====================== */
+/* Planet-Specific Styles */
 #earth-system a-ring {
   mix-blend-mode: screen;
 }
@@ -31,9 +29,7 @@
   animation: atmosphere-pulse 3s infinite alternate;
 }
 
-/* ======================
-   Animations 
-   ====================== */
+/* Animations */
 @keyframes atmosphere-glow {
   from { opacity: 0.15; }
   to { opacity: 0.25; }
@@ -44,9 +40,7 @@
   to { opacity: 0.5; }
 }
 
-/* ======================
-   UI Components 
-   ====================== */
+/* UI Components */
 .planet-label {
   font-family: Arial;
   background: var(--space-light);
@@ -88,57 +82,4 @@
 #info-panel[data-visible] {
   opacity: 1;
   transform: translateY(0);
-}
-
-#audio-unlock {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--space-dark);
-  color: var(--white);
-  padding: 20px;
-  border-radius: 10px;
-  font-family: Arial;
-  text-align: center;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-/* loading screen */
-#loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--space-dark);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial;
-  color: white;
-}
-
-.loading-bar-container {
-  width: 50%;
-  max-width: 300px;
-  height: 20px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 20px 0;
-}
-
-#loading-bar {
-  height: 100%;
-  width: 0%;
-  background: var(--highlight-blue);
-  transition: width 0.3s ease;
-}
-
-#loading-text {
-  font-size: 1.2em;
 }
