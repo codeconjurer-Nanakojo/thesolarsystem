@@ -1,17 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Interactive Solar System</title>
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <script src="https://unpkg.com/aframe-animation-component@5.1.2/dist/aframe-animation-component.min.js"></script>
-  <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
-  <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <head>
+    <!-- Character encoding -->
+    <meta charset="UTF-8">
+    
+    <!-- Responsive viewport with better mobile handling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Preconnect to CDNs for faster script loading -->
+    <link rel="preconnect" href="https://aframe.io">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    
+    <!-- Title -->
+    <title>Interactive Solar System</title>
+    
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    
+    <!-- A-Frame Core -->
+    <script src="script/aframe.min.js"></script>
+    
+    <!-- CSS for preventing zoom -->
+    <style>
+      html {
+        touch-action: manipulation;
+      }
+    </style>
+    
+    <!-- Optimized component loading -->
+    <script>
+      // Prevent zoom gestures
+      document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+      });
+  
+      // Load components after DOM is ready
+      document.addEventListener('DOMContentLoaded', () => {
+        const loadScript = (src) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.async = true;
+          document.body.appendChild(script);
+        };
+        
+        loadScript('https://unpkg.com/aframe-animation-component@5.1.2/dist/aframe-animation-component.min.js');
+        loadScript('https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js');
+        loadScript('https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js');
+      });
+    </script>
+  </head>
 <body>
-  <a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+  <a-scene renderer="antialias: false; precision: mediump">
     <a-assets timeout="30000">
       <!-- Critical assets -->
       <img src="texture/2k_sun.jpg" id="sun" alt="Sun">

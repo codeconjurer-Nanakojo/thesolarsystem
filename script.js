@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Planet information data
+  // Planet information data - kept intact
   const planetInfo = {
       sun: {
           title: "The Sun",
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   };
 
-  // Planet click handler
+  // Optimized planet click handler
   document.querySelectorAll('.clickable').forEach(planet => {
       planet.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -52,38 +52,36 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('info-title').textContent = info.title;
           document.getElementById('info-details').innerHTML = info.details;
           
+          // Smooth panel show/hide
           const panel = document.getElementById('info-panel');
           panel.style.opacity = 0;
           panel.style.display = 'block';
           setTimeout(() => panel.style.opacity = 1, 10);
           
-          // Position camera
+          // Camera focus with simplified animation
           const camera = document.getElementById('camera');
           const planetObj = planet.object3D;
           const planetRadius = planet.getAttribute('radius') || 1;
           const distance = planetRadius * 5;
           
-          const direction = new THREE.Vector3();
-          direction.subVectors(camera.object3D.position, planetObj.position).normalize();
-          
-          const newPos = {
-              x: planetObj.position.x + (direction.x * distance),
-              y: planetObj.position.y + (distance * 0.3),
-              z: planetObj.position.z + (direction.z * distance)
-          };
+          const newPos = new THREE.Vector3(
+              planetObj.position.x,
+              planetObj.position.y + (distance * 0.3),
+              planetObj.position.z + distance
+          );
           
           camera.setAttribute('animation', {
               property: 'position',
               to: `${newPos.x} ${newPos.y} ${newPos.z}`,
-              dur: 1000,
-              easing: 'easeInOutQuad'
+              dur: 800,  // Faster duration
+              easing: 'easeOutQuad'
           });
           
           camera.setAttribute('look-at', planet);
       });
   });
 
-  // Close panel when clicking elsewhere
+  // Close panel when clicking background
   document.querySelector('a-scene').addEventListener('click', (e) => {
       if (!e.target.classList.contains('clickable') && !e.target.closest('.clickable')) {
           const panel = document.getElementById('info-panel');
@@ -94,4 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('camera').removeAttribute('look-at');
       }
   });
+
+  // Enable A-Frame's built-in loading screen
+  const scene = document.querySelector('a-scene');
+  if (scene.hasLoaded) {
+      document.getElementById('loading-screen').style.display = 'none';
+  } else {
+      scene.addEventListener('loaded', () => {
+          document.getElementById('loading-screen').style.display = 'none';
+      });
+  }
 });
